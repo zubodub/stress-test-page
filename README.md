@@ -6,7 +6,7 @@ A modern, highly customizable browser-based CPU and GPU stress testing tool buil
 
 Push your device to its absolute limits directly from your browser—no installation required.
 
-![Interface Screenshot](https://raw.githubusercontent.com/zubodub/stress-test-page/main/public/screenshot.png)
+![Interface Screenshot](https://raw.githubusercontent.com/zubodub/stress-test/main/public/screenshot.png)
 
 ## Features
 
@@ -37,8 +37,8 @@ This project is built with [Vite](https://vitejs.dev/) and React.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/zubodub/stress-test-page.git
-   cd stress-test-page
+   git clone https://github.com/zubodub/stress-test.git
+   cd stress-test
    ```
 
 2. Install dependencies:

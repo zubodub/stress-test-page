@@ -16,11 +16,11 @@ function App() {
   const [gpuIntensity, setGpuIntensity] = useState<number>(500);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [fps, setFps] = useState(0);
-  const [duration, setDuration] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(600);
   const [sequence, setSequence] = useState<TestSequence>({
     blocks: [
-      { id: '1', type: 'run', durationMinutes: 1 },
-      { id: '2', type: 'cooldown', durationMinutes: 1 }
+      { id: '1', type: 'run', durationSeconds: 1800 },
+      { id: '2', type: 'cooldown', durationSeconds: 600 }
     ],
     loops: 0
   });
@@ -277,7 +277,7 @@ function App() {
       if (sequence.blocks.length === 0) return;
       
       const currentBlock = sequence.blocks[sequenceState.currentBlockIndex];
-      if (currentBlock && sequenceState.blockElapsedTime >= currentBlock.durationMinutes * 60) {
+      if (currentBlock && sequenceState.blockElapsedTime >= currentBlock.durationSeconds) {
         // Move to next block
         let nextBlockIndex = sequenceState.currentBlockIndex + 1;
         let nextLoop = sequenceState.currentLoop;
@@ -350,7 +350,7 @@ function App() {
             duration !== -1
               ? duration === 0 ? null : Math.max(0, duration - elapsedTime)
               : sequenceState.active && sequence.blocks.length > 0
-                ? Math.max(0, sequence.blocks[sequenceState.currentBlockIndex]?.durationMinutes * 60 - sequenceState.blockElapsedTime) ?? null
+                ? Math.max(0, sequence.blocks[sequenceState.currentBlockIndex]?.durationSeconds - sequenceState.blockElapsedTime) ?? null
                 : null
           }
         />

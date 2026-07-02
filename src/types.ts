@@ -5,7 +5,7 @@ export type SequenceBlockType = 'run' | 'cooldown';
 export interface SequenceBlock {
   id: string;
   type: SequenceBlockType;
-  durationMinutes: number;
+  durationSeconds: number;
 }
 
 export interface TestSequence {

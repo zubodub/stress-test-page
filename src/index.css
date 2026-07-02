@@ -274,3 +274,29 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.stats-label {
+  font-size: 0.8em;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-value {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.stats-value-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .stats-label {
+    font-size: 0.6em;
+    letter-spacing: 0;
+  }
+  .stats-value {
+    font-size: 1.1em;
+  }
+}

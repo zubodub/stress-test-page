@@ -57,23 +57,36 @@ const TimeInput: React.FC<{ value: number, onChange: (val: number) => void, disa
   };
 
   const inputStyle: React.CSSProperties = {
-    width: '54px',
-    background: 'rgba(0,0,0,0.2)',
+    width: '26px',
+    background: 'transparent',
     color: 'inherit',
-    border: '1px solid rgba(255,255,255,0.1)',
-    padding: '0.2rem 0.2rem',
-    borderRadius: '0.3rem',
-    cursor: disabled ? 'not-allowed' : 'text',
+    border: 'none',
+    padding: '0',
+    outline: 'none',
     textAlign: 'center',
-    fontVariantNumeric: 'tabular-nums'
+    fontVariantNumeric: 'tabular-nums',
+    fontSize: '1.05em',
+    fontWeight: '500',
+    cursor: disabled ? 'not-allowed' : 'text'
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: '0.85em', opacity: 0.5, marginLeft: '4px', marginRight: '8px'
+    fontSize: '0.85em', opacity: 0.5, marginLeft: '2px', marginRight: '8px', fontWeight: 'bold'
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      background: 'rgba(0,0,0,0.3)', 
+      border: '1px solid rgba(255,255,255,0.1)', 
+      borderRadius: '0.4rem', 
+      padding: '0.4rem 0.5rem',
+      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
+      opacity: disabled ? 0.5 : 1,
+      flex: 1,
+      justifyContent: 'center'
+    }}>
       <input type="number" min="0" value={h || ''} onChange={e => handleChange('h', e.target.value)} disabled={disabled} style={inputStyle} placeholder="0" />
       <span style={labelStyle}>h</span>
       
@@ -81,7 +94,7 @@ const TimeInput: React.FC<{ value: number, onChange: (val: number) => void, disa
       <span style={labelStyle}>m</span>
       
       <input type="number" min="0" max="59" value={s || ''} onChange={e => handleChange('s', e.target.value)} disabled={disabled} style={inputStyle} placeholder="0" />
-      <span style={labelStyle}>s</span>
+      <span style={{...labelStyle, marginRight: 0}}>s</span>
     </div>
   );
 };
@@ -142,30 +155,42 @@ export const PresetSettings: React.FC<PresetSettingsProps> = ({
           gap: '0.2rem',
           border: '1px solid rgba(255,255,255,0.1)'
         }}>
-          {(['low', 'medium', 'high', 'extreme', 'custom'] as Preset[]).map(p => (
-            <div
-              key={p}
-              onClick={() => {
-                if (!cpuRunning && !gpuRunning) {
-                  onPresetChange(p);
-                }
-              }}
-              className={preset === p ? "tab-active" : ""}
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                padding: '0.4rem 0',
-                borderRadius: '0.4rem',
-                fontSize: '0.85em',
-                fontWeight: preset === p ? 'bold' : 'normal',
-                cursor: (cpuRunning || gpuRunning) ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s',
-                opacity: (cpuRunning || gpuRunning) && preset !== p ? 0.5 : 1
-              }}
-            >
-              {p.charAt(0).toUpperCase() + p.slice(1)}
-            </div>
-          ))}
+          {(['low', 'medium', 'high', 'extreme', 'custom'] as Preset[]).map(p => {
+            let label = '';
+            if (p === 'low') label = 'LOW';
+            if (p === 'medium') label = 'MED';
+            if (p === 'high') label = 'HIGH';
+            if (p === 'extreme') label = 'EXT';
+            if (p === 'custom') label = 'CUST';
+
+            return (
+              <div
+                key={p}
+                onClick={() => {
+                  if (!cpuRunning && !gpuRunning) {
+                    onPresetChange(p);
+                  }
+                }}
+                className={preset === p ? "tab-active" : ""}
+                title={p.charAt(0).toUpperCase() + p.slice(1)}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0.4rem 0',
+                  borderRadius: '0.4rem',
+                  cursor: (cpuRunning || gpuRunning) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  opacity: (cpuRunning || gpuRunning) && preset !== p ? 0.5 : 1
+                }}
+              >
+                <span className="preset-label" style={{ fontSize: '0.85em', fontWeight: preset === p ? 'bold' : 'normal' }}>
+                  {label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -254,13 +279,13 @@ export const PresetSettings: React.FC<PresetSettingsProps> = ({
             <div style={{ fontSize: '0.85em', opacity: 0.8, marginBottom: '0.2rem' }}>Custom Sequence</div>
             
             {sequence.blocks.map((block, index) => (
-              <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.03)', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ width: '90px' }}>
+              <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.03)', padding: '0.4rem 0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ width: '85px' }}>
                   <GradientLabel 
                     id={`list-${block.id}`}
                     icon={block.type === 'run' ? <Play size={16} /> : <Pause size={16} />} 
                     text={block.type === 'run' ? 'Run' : 'Cooldown'} 
-                    width={90} 
+                    width={85} 
                   />
                 </div>
                 
@@ -274,8 +299,7 @@ export const PresetSettings: React.FC<PresetSettingsProps> = ({
                   disabled={cpuRunning || gpuRunning}
                 />
                 
-                <div style={{ flex: 1 }} />
-                
+
                 <button
                   onClick={() => {
                     const newBlocks = sequence.blocks.filter((_, i) => i !== index);
@@ -332,22 +356,37 @@ export const PresetSettings: React.FC<PresetSettingsProps> = ({
               <div style={{ width: '75px' }}>
                 <GradientLabel id="label-loops" icon={<Repeat size={16} />} text="Loops:" width={75} />
               </div>
-              <input
-                type="number"
-                min="0"
-                value={sequence.loops}
-                onChange={(e) => onSequenceChange({ ...sequence, loops: Math.max(0, Number(e.target.value)) })}
-                disabled={cpuRunning || gpuRunning}
-                style={{
-                  width: '60px',
-                  background: 'rgba(0,0,0,0.2)',
-                  color: 'inherit',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  padding: '0.2rem 0.4rem',
-                  borderRadius: '0.3rem',
-                  cursor: (cpuRunning || gpuRunning) ? 'not-allowed' : 'text'
-                }}
-              />
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                background: 'rgba(0,0,0,0.3)', 
+                border: '1px solid rgba(255,255,255,0.1)', 
+                borderRadius: '0.4rem', 
+                padding: '0.4rem 0.5rem',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
+                opacity: (cpuRunning || gpuRunning) ? 0.5 : 1
+              }}>
+                <input
+                  type="number"
+                  min="0"
+                  value={sequence.loops}
+                  onChange={(e) => onSequenceChange({ ...sequence, loops: Math.max(0, Number(e.target.value)) })}
+                  disabled={cpuRunning || gpuRunning}
+                  style={{
+                    width: '40px',
+                    background: 'transparent',
+                    color: 'inherit',
+                    border: 'none',
+                    padding: '0',
+                    outline: 'none',
+                    textAlign: 'center',
+                    fontVariantNumeric: 'tabular-nums',
+                    fontSize: '1.05em',
+                    fontWeight: '500',
+                    cursor: (cpuRunning || gpuRunning) ? 'not-allowed' : 'text'
+                  }}
+                />
+              </div>
               <span style={{ fontSize: '0.85em', opacity: 0.7 }}>(0 = Infinite)</span>
             </div>
           </div>

@@ -28,33 +28,33 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
   return (
     <div style={{ marginBottom: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', rowGap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ gridColumn: 'span 2', textAlign: 'center' }}>
-        <div style={{ fontSize: '0.8em', opacity: 0.6 }}>ACTIVE THREADS</div>
-        <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{cpuRunning ? Math.round(cpuIntensity) : 0}</div>
+        <div className="stats-label">ACTIVE THREADS</div>
+        <div className="stats-value">{cpuRunning ? Math.round(cpuIntensity) : 0}</div>
       </div>
       <div style={{ gridColumn: 'span 2', textAlign: 'center' }}>
-        <div style={{ fontSize: '0.8em', opacity: 0.6 }}>FPS</div>
-        <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
+        <div className="stats-label">FPS</div>
+        <div className="stats-value">
           {fps}
         </div>
       </div>
       <div style={{ gridColumn: 'span 2', textAlign: 'center' }}>
-        <div style={{ fontSize: '0.8em', opacity: 0.6 }}>STEP REMAINING</div>
-        <div style={{ fontSize: '1.5em', fontWeight: 'bold', fontVariantNumeric: 'tabular-nums', color: 'white' }}>
+        <div className="stats-label">STEP REMAINING</div>
+        <div className="stats-value stats-value-tabular" style={{ color: 'white' }}>
           {stepRemainingTime !== null ? formatTime(stepRemainingTime) : '∞'}
         </div>
       </div>
       <div style={{ gridColumn: 'span 3', textAlign: 'center' }}>
-        <div style={{ fontSize: '0.8em', opacity: 0.6 }}>STATUS</div>
+        <div className="stats-label">STATUS</div>
         <div 
-          className={(cpuRunning || gpuRunning) ? "gradient-text" : ""}
-          style={{ fontSize: '1.5em', fontWeight: 'bold', color: (cpuRunning || gpuRunning) ? 'inherit' : sequencePaused ? '#60a5fa' : 'white' }}
+          className={`stats-value ${(cpuRunning || gpuRunning) ? "gradient-text" : ""}`}
+          style={{ color: (cpuRunning || gpuRunning) ? 'inherit' : sequencePaused ? '#60a5fa' : 'white' }}
         >
           {cpuRunning || gpuRunning ? 'TESTING' : sequencePaused ? 'COOLDOWN' : 'IDLE'}
         </div>
       </div>
       <div style={{ gridColumn: 'span 3', textAlign: 'center' }}>
-        <div style={{ fontSize: '0.8em', opacity: 0.6 }}>ELAPSED TIME</div>
-        <div style={{ fontSize: '1.5em', fontWeight: 'bold', fontVariantNumeric: 'tabular-nums' }}>
+        <div className="stats-label">ELAPSED TIME</div>
+        <div className="stats-value stats-value-tabular">
           {formatTime(elapsedTime)}
         </div>
       </div>

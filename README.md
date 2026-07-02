@@ -1,5 +1,7 @@
 # Web System Stress Test
 
+🌐 **Live Demo:** [stress.zubodub.ru](https://stress.zubodub.ru)
+
 A modern, highly customizable browser-based CPU and GPU stress testing tool built with React, TypeScript, and WebGL.
 
 Push your device to its absolute limits directly from your browser—no installation required.

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Activity, Cpu, Monitor, Settings } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { GPUStressTest } from './gpuStress';
-import './App.css'; // Just keeping it around if needed, though we rely on index.css
-
-type Preset = 'low' | 'medium' | 'high' | 'extreme' | 'custom';
+import { ControlButtons } from './components/ControlButtons';
+import { StatsPanel } from './components/StatsPanel';
+import { PresetSettings } from './components/PresetSettings';
+import type { Preset } from './types';
+import './App.css';
 
 function App() {
   const [cpuRunning, setCpuRunning] = useState(false);
@@ -215,12 +217,6 @@ function App() {
     }
   };
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  };
-
   return (
     <>
       <canvas id="gpu-canvas"></canvas>
@@ -230,136 +226,31 @@ function App() {
           <h1 style={{ margin: 0, lineHeight: 1 }}>Stress Test</h1>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-          <button
-            className={`btn ${cpuRunning && !gpuRunning ? 'active pulse' : ''}`}
-            onClick={() => handleModeClick('cpu')}
-            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
-          >
-            <Cpu size={20} />
-            <span style={{ whiteSpace: 'nowrap' }}>CPU only</span>
-          </button>
+        <ControlButtons 
+          cpuRunning={cpuRunning}
+          gpuRunning={gpuRunning}
+          onModeClick={handleModeClick}
+        />
 
-          <button
-            className={`btn ${!cpuRunning && gpuRunning ? 'active pulse' : ''}`}
-            onClick={() => handleModeClick('gpu')}
-            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
-          >
-            <Monitor size={20} />
-            <span style={{ whiteSpace: 'nowrap' }}>GPU only</span>
-          </button>
+        <StatsPanel 
+          cpuRunning={cpuRunning}
+          gpuRunning={gpuRunning}
+          cpuIntensity={cpuIntensity}
+          fps={fps}
+          elapsedTime={elapsedTime}
+        />
 
-          <button
-            className={`btn ${cpuRunning && gpuRunning ? 'active pulse' : ''}`}
-            onClick={() => handleModeClick('both')}
-            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
-          >
-            <Activity size={20} />
-            <span style={{ whiteSpace: 'nowrap' }}>CPU + GPU</span>
-          </button>
-        </div>
-
-        <div style={{ marginBottom: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', rowGap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8em', opacity: 0.6 }}>ACTIVE THREADS</div>
-            <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{cpuRunning ? Math.round(cpuIntensity) : 0}</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8em', opacity: 0.6 }}>FPS</div>
-            <div style={{ fontSize: '1.5em', fontWeight: 'bold', color: fps < 30 ? '#ef4444' : fps < 50 ? '#facc15' : 'inherit' }}>
-              {fps}
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8em', opacity: 0.6 }}>ELAPSED TIME</div>
-            <div style={{ fontSize: '1.5em', fontWeight: 'bold', fontFamily: 'monospace' }}>
-              {formatTime(elapsedTime)}
-            </div>
-          </div>
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8em', opacity: 0.6 }}>STATUS</div>
-            <div style={{ fontSize: '1.5em', fontWeight: 'bold', color: (cpuRunning || gpuRunning) ? '#fca5a5' : '#86efac' }}>
-              {cpuRunning || gpuRunning ? 'TESTING' : 'IDLE'}
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Settings size={20} style={{ opacity: 0.7 }} />
-              <label style={{ fontWeight: 'bold' }}>Preset</label>
-            </div>
-            <div style={{
-              display: 'flex',
-              background: 'rgba(255,255,255,0.05)',
-              borderRadius: '0.5rem',
-              padding: '0.2rem',
-              gap: '0.2rem',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              {(['low', 'medium', 'high', 'extreme', 'custom'] as Preset[]).map(p => (
-                <div
-                  key={p}
-                  onClick={() => {
-                    if (!cpuRunning && !gpuRunning) {
-                      handlePresetChange(p);
-                    }
-                  }}
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    padding: '0.4rem 0',
-                    borderRadius: '0.4rem',
-                    fontSize: '0.85em',
-                    fontWeight: preset === p ? 'bold' : 'normal',
-                    cursor: (cpuRunning || gpuRunning) ? 'not-allowed' : 'pointer',
-                    background: preset === p ? 'rgba(96, 165, 250, 0.2)' : 'transparent',
-                    color: preset === p ? '#60a5fa' : 'inherit',
-                    transition: 'all 0.2s',
-                    opacity: (cpuRunning || gpuRunning) && preset !== p ? 0.5 : 1
-                  }}
-                >
-                  {p.charAt(0).toUpperCase() + p.slice(1)}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', opacity: 0.8 }}>
-              <span>CPU Intensity (Workers)</span>
-              <span style={{ fontWeight: 'bold' }}>{Math.round(cpuIntensity)} threads</span>
-            </div>
-            <input
-              type="range"
-              min="1"
-              max={maxCores * 4}
-              step="any"
-              value={cpuIntensity}
-              onChange={(e) => handleCpuChange(Number(e.target.value))}
-              disabled={cpuRunning}
-              style={{ width: '100%', cursor: cpuRunning ? 'not-allowed' : 'pointer' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', opacity: 0.8 }}>
-              <span>GPU Intensity (Loop Size)</span>
-              <span style={{ fontWeight: 'bold' }}>{Math.round(gpuIntensity)} ops</span>
-            </div>
-            <input
-              type="range"
-              min="10"
-              max="15000"
-              step="any"
-              value={gpuIntensity}
-              onChange={(e) => handleGpuChange(Number(e.target.value))}
-              disabled={gpuRunning}
-              style={{ width: '100%', cursor: gpuRunning ? 'not-allowed' : 'pointer' }}
-            />
-          </div>
-        </div>
+        <PresetSettings
+          preset={preset}
+          cpuIntensity={cpuIntensity}
+          gpuIntensity={gpuIntensity}
+          cpuRunning={cpuRunning}
+          gpuRunning={gpuRunning}
+          maxCores={maxCores}
+          onPresetChange={handlePresetChange}
+          onCpuChange={handleCpuChange}
+          onGpuChange={handleGpuChange}
+        />
       </div>
     </>
   );

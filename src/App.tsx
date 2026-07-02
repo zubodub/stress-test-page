@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Activity, Cpu, Monitor, Play, Square, Settings } from 'lucide-react';
+import { Activity, Cpu, Monitor, Settings } from 'lucide-react';
 import { GPUStressTest } from './gpuStress';
 import './App.css'; // Just keeping it around if needed, though we rely on index.css
 

@@ -4,7 +4,7 @@ A modern, highly customizable browser-based CPU and GPU stress testing tool buil
 
 Push your device to its absolute limits directly from your browser—no installation required.
 
-![Interface Screenshot](https://raw.githubusercontent.com/zubodub/stress-test-page/main/public/favicon.svg) <!-- Replace with an actual screenshot if available -->
+![Interface Screenshot](https://raw.githubusercontent.com/zubodub/stress-test-page/main/public/screenshot.png)
 
 ## Features
 

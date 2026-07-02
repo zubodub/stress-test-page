@@ -10,14 +10,17 @@ export class GPUStressTest {
     this.gl = this.canvas.getContext('webgl');
     if (!this.gl) {
       console.error('WebGL not supported');
-    } else {
-      this.initWebGL();
     }
   }
 
-  private initWebGL() {
+  private initWebGL(loopCount: number) {
     if (!this.gl) return;
     const gl = this.gl;
+
+    if (this.program) {
+      gl.deleteProgram(this.program);
+      this.program = null;
+    }
 
     const vsSource = `
       attribute vec4 aVertexPosition;
@@ -32,17 +35,59 @@ export class GPUStressTest {
       uniform float u_time;
 
       void main() {
-        vec2 st = gl_FragCoord.xy / u_resolution.xy;
-        float color = 0.0;
+        vec2 p = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
         
-        // Massive fixed loop to burn GPU cycles
-        for(int i = 0; i < 3000; i++) {
-          vec2 p = st * 2.0 - 1.0;
-          color += sin(length(p) * 10.0 + u_time + float(i) * 0.01) * 0.0005;
-          color += cos(p.x * p.y * 20.0 + u_time * 0.5) * 0.0005;
+        // Slow rotation to make it dynamic
+        float t = u_time * 0.1;
+        mat2 rot = mat2(cos(t), -sin(t), sin(t), cos(t));
+        p = rot * p;
+
+        // 1. Beautiful Liquid Plasma (Visual Effect)
+        // Scale visual iterations down if loopCount is very low to maintain high FPS
+        float visualIters = ${loopCount} < 200 ? 4.0 : 8.0;
+        vec2 uv = p * 1.5;
+        float time = u_time * 0.4;
+        for(float i = 1.0; i < 10.0; i++) {
+            if (i >= visualIters) break;
+            vec2 new_uv = uv;
+            new_uv.x += 0.6 / i * cos(i * 2.5 * uv.y + time);
+            new_uv.y += 0.6 / i * cos(i * 1.5 * uv.x + time);
+            uv = new_uv;
+        }
+        // Normalize to [0, 1] range
+        float visualIntensity = 0.5 * sin(uv.x + uv.y) + 0.5;
+
+        // 2. Stress Loop (Performance Burner)
+        // We do heavy trig math here to stress the GPU, and add a tiny bit of its 
+        // result to the final color to prevent the compiler from optimizing it out.
+        float stressAcc = 0.0;
+        float stressAmp = 0.5 / float(${loopCount}); 
+        
+        for(int i = 0; i < ${loopCount}; i++) {
+           float fi = float(i);
+           vec2 q = p * (1.0 + mod(fi, 13.0) * 0.1); 
+           stressAcc += sin(length(q) * 20.0 + u_time + fi * 0.11) * stressAmp;
+           stressAcc += cos(q.x * q.y * 30.0 - u_time + fi * 0.13) * stressAmp;
         }
 
-        gl_FragColor = vec4(vec3(color + 0.1, color * 0.3, 0.4 - color), 1.0);
+        // Combine visual plasma and stress grain
+        float intensity = visualIntensity + stressAcc;
+
+        // 3. Neon blue/purple/magenta color scheme
+        vec3 darkBlue = vec3(0.02, 0.0, 0.15);
+        vec3 purple = vec3(0.3, 0.0, 0.6);
+        vec3 magenta = vec3(0.8, 0.1, 0.8);
+        vec3 brightBlue = vec3(0.1, 0.4, 1.0);
+
+        vec3 col = darkBlue;
+        col = mix(col, purple, smoothstep(0.0, 0.3, intensity));
+        col = mix(col, magenta, smoothstep(0.3, 0.7, intensity));
+        col = mix(col, brightBlue, smoothstep(0.7, 1.0, intensity));
+        
+        // Bright core highlight
+        col += vec3(1.0, 0.8, 1.0) * smoothstep(0.9, 1.2, intensity);
+        
+        gl_FragColor = vec4(col, 1.0);
       }
     `;
 
@@ -76,8 +121,12 @@ export class GPUStressTest {
     return shader;
   }
 
-  public start() {
-    if (!this.gl || !this.program || this.isRunning) return;
+  public start(loopCount: number = 3000) {
+    if (!this.gl || this.isRunning) return;
+    
+    this.initWebGL(loopCount);
+    if (!this.program) return;
+
     this.isRunning = true;
     this.canvas.classList.add('active');
 

@@ -18,6 +18,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -44,6 +48,17 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 2rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+  .glass-panel {
+    padding: 1.5rem 1rem;
+  }
 }
 
 .glass-panel:hover {
@@ -122,4 +137,10 @@ canvas#gpu-canvas {
 
 canvas#gpu-canvas.active {
   opacity: 0.3; /* Keep it subtle in the background */
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.2em;
+  }
 }

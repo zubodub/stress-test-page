@@ -186,12 +186,12 @@ function App() {
     <>
       <canvas id="gpu-canvas"></canvas>
       <div className="glass-panel">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '2rem' }}>
-          <Activity color="#60a5fa" size={48} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          <Activity color="#60a5fa" size={42} />
           <h1 style={{ margin: 0, lineHeight: 1 }}>Stress Test</h1>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Settings size={20} style={{ opacity: 0.7 }} />
@@ -248,36 +248,36 @@ function App() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           <button 
             className={`btn ${cpuRunning && !gpuRunning ? 'active pulse' : ''}`}
             onClick={() => handleModeClick('cpu')}
-            style={{ flex: '1 1 0', minWidth: '120px', padding: '1rem 0.5rem' }}
+            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
           >
             <Cpu size={20} />
-            <span>CPU only</span>
+            <span style={{ whiteSpace: 'nowrap' }}>CPU only</span>
           </button>
 
           <button 
             className={`btn ${!cpuRunning && gpuRunning ? 'active pulse' : ''}`}
             onClick={() => handleModeClick('gpu')}
-            style={{ flex: '1 1 0', minWidth: '120px', padding: '1rem 0.5rem' }}
+            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
           >
             <Monitor size={20} />
-            <span>GPU only</span>
+            <span style={{ whiteSpace: 'nowrap' }}>GPU only</span>
           </button>
 
           <button 
             className={`btn ${cpuRunning && gpuRunning ? 'active pulse' : ''}`}
             onClick={() => handleModeClick('both')}
-            style={{ flex: '1 1 0', minWidth: '120px', padding: '1rem 0.5rem' }}
+            style={{ flex: '1 1 0', minWidth: 0, padding: '0.8rem 0.2rem', fontSize: '0.9em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
           >
             <Activity size={20} />
-            <span>CPU + GPU</span>
+            <span style={{ whiteSpace: 'nowrap' }}>CPU + GPU</span>
           </button>
         </div>
 
-        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-around', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-around', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
             <div style={{ fontSize: '0.8em', opacity: 0.6 }}>ACTIVE THREADS</div>
             <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{cpuRunning ? cpuIntensity : maxCores}</div>
